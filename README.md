@@ -1,5 +1,5 @@
 
-# Supplementary Materials for "A Knowledge Distillation-Based Multi-Granularity Collaborative Learning Approach for Software Defect Prediction"
+# Supplementary Materials for "A Knowledge Distillation-Based Approach for Line-Level Defect Prediction"
   
 <p align="center">
   <img src="Figures/The framework of DistllMT.png" width="800">
