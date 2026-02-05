@@ -2,7 +2,7 @@
 # Supplementary Materials for "A Knowledge Distillation-Based Approach for Line-Level Defect Prediction"
   
 <p align="center">
-  <img src="Figures/The framework of DistllMT.png" width="800">
+  <img src="Figures/The framework of DistillMT.png" width="800">
 </p>
 
 ## Prerequisites
