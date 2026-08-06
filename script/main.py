@@ -142,7 +142,7 @@ def main():
     if args.early_stop_metric == 'val_loss':
         best_metric = float('inf')
     else:
-        best_metric = 0
+        best_metric = float('-inf')
 
     node_labels_all = []
     for data in train_dataset:
@@ -190,6 +190,8 @@ def main():
         best_test_acc = 0.0
         wait = 0
         best_test_acc, best_auc, best_f1 = 0.0, 0.0, 0.0
+        best_balanced_acc = 0.0
+        best_mcc = 0.0
 
         for epoch in range(args.epochs):
             s_time = time.time()
@@ -280,6 +282,8 @@ def main():
 
             val_loss = 0.
             val_corrects = 0
+            val_y_preds = []
+            val_y_tures = []
             model.eval()
             with torch.no_grad():
                 for i, data in enumerate(val_loader):
@@ -343,11 +347,37 @@ def main():
                         graph_out, _ = model(x, labs, edge_index, batch)
 
                         loss = ce_loss(graph_out, data.y.view(-1))
+                    val_y_preds.append(graph_out.cpu().numpy())
+                    val_y_tures.append(data.y.view(-1).cpu().numpy())
                     val_loss += loss.item()
                     val_corrects += graph_out.max(dim=1)[1].eq(data.y.view(-1)).sum().item()
 
             val_loss /= len(val_loader)
             val_acc = val_corrects / len(valid_dataset)
+
+            if isinstance(val_y_tures, list):
+                val_y_tures = np.concatenate(val_y_tures, axis=0)
+            if isinstance(val_y_preds, list):
+                val_y_preds = np.concatenate(val_y_preds, axis=0)
+
+            if val_y_preds.ndim > 1:
+                if val_y_preds.shape[1] == 1:
+                    val_probas = val_y_preds[:, 0]
+                else:
+                    val_probas = softmax(val_y_preds, axis=1)[:, 1]
+                val_y_preds_label = np.argmax(val_y_preds, axis=1)
+            else:
+                val_probas = val_y_preds
+                val_y_preds_label = (val_y_preds >= 0.5).astype(int)
+            val_y_tures = val_y_tures.astype(int)
+            val_y_preds_label = val_y_preds_label.astype(int)
+            try:
+                val_auc = roc_auc_score(val_y_tures, val_probas)
+            except:
+                val_auc = 0.0
+            val_f1 = f1_score(val_y_tures, val_y_preds_label, zero_division=0)
+            val_balanced_acc = balanced_accuracy_score(val_y_tures, val_y_preds_label)
+            val_mcc = matthews_corrcoef(val_y_tures, val_y_preds_label)
 
             test_loss = 0.
             test_corrects = 0
@@ -457,9 +487,6 @@ def main():
                         mcc)
             print(log)
 
-            best_balanced_acc = 0
-            best_mcc = 0
-
             if best_test_acc < test_acc:
                 best_test_acc = test_acc
             if best_auc < auc:
@@ -474,15 +501,15 @@ def main():
             if args.early_stop_metric == 'val_loss':
                 current_metric = val_loss
             elif args.early_stop_metric == 'auc':
-                current_metric = auc
+                current_metric = val_auc
             elif args.early_stop_metric == 'mcc':
-                current_metric = mcc
+                current_metric = val_mcc
             elif args.early_stop_metric == 'f1':
-                current_metric = f1
+                current_metric = val_f1
             elif args.early_stop_metric == 'ba':
-                current_metric = balanced_acc
+                current_metric = val_balanced_acc
             elif args.early_stop_metric == 'acc':
-                current_metric = test_acc
+                current_metric = val_acc
             else:
                 raise ValueError(f"Unknown early_stop_metric: {args.early_stop_metric}")
 
