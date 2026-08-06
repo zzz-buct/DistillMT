@@ -57,11 +57,11 @@ For example, there are 5 releases in ActiveMQ (e.g., R1, R2, R3, R4, R5), R1 is 
 ```
     python 1.* HPDG Construction_*.py
 ```
-2. Run the Teacher Model(Global Semantic-Aware Teacher Model Training):
+2. Run the Teacher Model(File-Level Context Learning):
 ```
     bash train_all_teachers.sh
 ```
-3. Run the Student Model(Knowledge Distillation-Based Student Model Training):
+3. Run the Student Model(Line-Level Learning with Knowledge Distillation):
 ```
     bash train_all_students.sh
 ```
