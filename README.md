@@ -1,6 +1,5 @@
-
 # Supplementary Materials for "A Knowledge Distillation-Based Approach for Line-Level Defect Prediction"
-  
+
 <p align="center">
   <img src="Figures/The framework of DistillMT.png" width="800">
 </p>
@@ -27,7 +26,11 @@ Here are the suggested environment:
 
 ### Thrid Party Liraries
 
+
+
 - [PropertyGraph](https://github.com/Zanbrachrissik/PropertyGraph)
+
+Additionally, replace `graph_tool_path` in `script/1.1 HPDG Construction_PDG_Code.py` with your own PropertyGraph path.
 
 ## Datasets
 
@@ -56,13 +59,13 @@ For example, there are 5 releases in ActiveMQ (e.g., R1, R2, R3, R4, R5), R1 is 
 ```
 2. Run the Teacher Model(Global Semantic-Aware Teacher Model Training):
 ```
-    python main.py --project activemq --train_dataset activemq-5.0.0 --valid_dataset activemq-5.1.0 --test_dataset activemq-5.2.0 --train_mode T --device 0 --seed 1 --nhid 256 --nlayers 4 --lr 0.01 --backbone HGT
+    bash train_all_teachers.sh
 ```
 3. Run the Student Model(Knowledge Distillation-Based Student Model Training):
 ```
-    python main.py --project activemq --train_dataset activemq-5.0.0 --valid_dataset activemq-5.1.0 --test_dataset activemq-5.2.0 --train_mode S --device 0 --seed 1 --nhid 256 --nlayers 4 --lr 0.001 --backbone HGT
+    bash train_all_students.sh
 ```
 4. Get The Multi-granularity Prediction:
 ```
-    python test.py --model_project activemq --target_project activemq--test_dataset activemq-5.2.0 --backbone HGT
+    bash test_all_students.sh
 ```
