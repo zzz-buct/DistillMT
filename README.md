@@ -11,16 +11,15 @@ Install the necessary dependencies before running the project:
 ### Environment Requirements
 Here are the suggested environment:
 ```
-- python==3.9.13
-- pytorch==1.12.1
-- dgl==1.0.2+cu116
-- ogb==1.3.5
-- sklearn
-- torch-cluster==1.6.0
-- torch-scatter==2.0.9
-- torch-sparse==0.6.15
-- torch-geometric==2.1.0
-- torchvision==0.13.1
+- python==3.12.3
+- pytorch==2.5.1+cu124
+- cuda==12.4
+- scikit-learn==1.7.2
+- torch-cluster==1.6.3+pt25cu124
+- torch-scatter==2.1.2+pt25cu124
+- torch-sparse==0.6.18+pt25cu124
+- torch-geometric==2.8.0.post1
+- torchvision==0.20.1+cu124
 ```
 <a name="G2LdD"></a>
 
